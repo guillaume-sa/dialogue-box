@@ -69,7 +69,7 @@ public class DialogueManager : MonoBehaviour
 
     private void TypeLetter(char letter)
     {
-        // Play audio
+        // Play a typing clip
         PlayTypingSound();
         // Add a letter to the text
         text.text += letter;
@@ -77,31 +77,36 @@ public class DialogueManager : MonoBehaviour
 
     private void Clear()
     {
+        // Empty text
         text.text = "";
     }
 
     public void Write(string text, float min_wait = MIN_TYPING_WAIT, float max_wait = MAX_TYPING_WAIT)
     {
+        // Create writing coroutine
         writingCoroutine = SlowTypeText(text.ToCharArray(), min_wait, max_wait);
+        // Start coroutine
         StartCoroutine(writingCoroutine);
     }
 
     public void Stop()
     {
+        // Stop writing coroutine
         StopCoroutine(writingCoroutine);
     }
 
     private IEnumerator SlowTypeText(char[] text, float min_wait, float max_wait)
     {
+        // Wait before starting to type
         yield return new WaitForSeconds(0.4f);
         // Iterate through all letters
         for (int i = 0; i < text.Length; ++i)
         {
-            // Type the letter in the logs
+            // Type the letter in the text
             TypeLetter(text[i]);
-            // Pick a random time to type it
+            // Pick a random time
             float waitTime = Random.Range(min_wait, max_wait);
-            // Wait for time
+            // Wait given time before typing next letter
             yield return new WaitForSeconds(waitTime);
         }
     }
@@ -109,6 +114,7 @@ public class DialogueManager : MonoBehaviour
     // Audio
     private void PlayTypingSound()
     {
+        // If typing audio clips are set
         if (typingClips.Length > 0)
         {
             // Pick a random audio clip
