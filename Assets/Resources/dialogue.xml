@@ -1,0 +1,5 @@
+<dialogue>
+	<message icon="avatar_1">Let's test this dialogue box...</message>
+	<message icon="avatar_2">TEST!</message>
+	<message icon="avatar_1">It works!</message>
+</dialogue>

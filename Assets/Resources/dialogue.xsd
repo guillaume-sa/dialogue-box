@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="dialogue" type="DialogueType"/>
+	
+	<xs:complexType name="DialogueType">
+		<xs:sequence>
+			<xs:element name="message" type="MessageType" 
+			minOccurs="0" 
+			maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="MessageType">
+		<xs:simpleContent>
+		  <xs:extension base="xs:string">
+			<xs:attribute name="icon" type="xs:string"/>
+		  </xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>
