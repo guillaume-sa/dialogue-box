@@ -7,6 +7,7 @@ public class DialogueManager : MonoBehaviour
 {
 
     public TextAsset xmlDialogFile;                 // Dialogue file
+    public AudioClip[] typingClips;                 // Typing audio clips
 
     private Text text;                              // Text UI
     private Image icon;                             // Icon UI
@@ -68,7 +69,8 @@ public class DialogueManager : MonoBehaviour
 
     private void TypeLetter(char letter)
     {
-        // TODO: Play typing sound
+        // Play audio
+        PlayTypingSound();
         // Add a letter to the text
         text.text += letter;
     }
@@ -101,6 +103,19 @@ public class DialogueManager : MonoBehaviour
             float waitTime = Random.Range(min_wait, max_wait);
             // Wait for time
             yield return new WaitForSeconds(waitTime);
+        }
+    }
+
+    // Audio
+    private void PlayTypingSound()
+    {
+        if (typingClips.Length > 0)
+        {
+            // Pick a random audio clip
+            int randomSound = Random.Range(0, typingClips.Length);
+            AudioClip typingClip = typingClips[randomSound];
+            // Play audio clip
+            SoundManager.instance.PlaySingle(typingClip);
         }
     }
 }
