@@ -3,11 +3,10 @@
 	<xs:element name="dialogue" type="DialogueType"/>
 	
 	<xs:complexType name="DialogueType">
-		<xs:sequence>
-			<xs:element name="message" type="MessageType" 
-			minOccurs="0" 
-			maxOccurs="unbounded"/>
-		</xs:sequence>
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="message" type="MessageType"/>
+      <xs:element name="answer" type="AnswerType"/>
+		</xs:choice>
 	</xs:complexType>
 	
 	<xs:complexType name="MessageType">
@@ -17,4 +16,12 @@
 		  </xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
+
+  <xs:complexType name="AnswerType">
+    <xs:sequence>
+      <xs:element name="choice1" type="xs:string"/>
+      <xs:element name="choice2" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="icon" type="xs:string"/>
+  </xs:complexType>
 </xs:schema>
