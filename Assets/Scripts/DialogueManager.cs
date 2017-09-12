@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
-using System.Xml;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections;
+using System.Collections.Generic;
+using System.Xml;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -25,6 +27,13 @@ public class DialogueManager : MonoBehaviour
     private string message;                         // Message
     private const float MIN_TYPING_WAIT = 0.02f;    // Minimum waiting time before next letter
     private const float MAX_TYPING_WAIT = 0.1f;     // Maximum waiting time before next letter
+
+    private List<string> answers;                   // List of answers selected by the user
+
+    public List<string> Answers                     // Answers property
+    {
+        get { return answers; }
+    }
 
     // Use this for initialization
     public void Start()
@@ -51,6 +60,7 @@ public class DialogueManager : MonoBehaviour
         nodeIndex = 0;
         nextNode = true;
         typing = false;
+        answers = new List<string>();
     }
 
     // Update is called once per frame
@@ -161,6 +171,14 @@ public class DialogueManager : MonoBehaviour
         DisableButtons();
         // Go to next node
         nextNode = true;
+        string buttonName = EventSystem.current.currentSelectedGameObject.name;
+        if (buttonName.Equals("ChoiceButton1"))
+        {
+            answers.Add(currentNode.SelectSingleNode("./choice1").Attributes["value"].Value);
+        }else if (buttonName.Equals("ChoiceButton2"))
+        {
+            answers.Add(currentNode.SelectSingleNode("./choice2").Attributes["value"].Value);
+        }
     }
 
     private void DisableButtons()
@@ -179,8 +197,6 @@ public class DialogueManager : MonoBehaviour
         button2.interactable = true;
         // Disable button canvas
         buttonsCanvas.enabled = true;
-        // Select first button by default
-        button1.Select();
     }
 
     // Audio

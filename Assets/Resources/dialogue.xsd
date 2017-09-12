@@ -16,12 +16,20 @@
 		  </xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-
+  
   <xs:complexType name="AnswerType">
     <xs:sequence>
-      <xs:element name="choice1" type="xs:string"/>
-      <xs:element name="choice2" type="xs:string"/>
+      <xs:element name="choice1" type="ChoiceType"/>
+      <xs:element name="choice2" type="ChoiceType"/>
     </xs:sequence>
     <xs:attribute name="icon" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="ChoiceType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="value" type="xs:string"/>
+      </xs:extension>
+    </xs:simpleContent>
   </xs:complexType>
 </xs:schema>
