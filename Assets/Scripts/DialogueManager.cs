@@ -24,6 +24,7 @@ public class DialogueManager : MonoBehaviour
     private int nodeIndex = 0;                      // Index of current XML node
     private bool nextNode;                          // Ready to read the next node
     private bool typing;                            // Is message being typed
+    private bool answering;                         // Is user answering
     private string message;                         // Message
     private const float MIN_TYPING_WAIT = 0.02f;    // Minimum waiting time before next letter
     private const float MAX_TYPING_WAIT = 0.1f;     // Maximum waiting time before next letter
@@ -60,12 +61,19 @@ public class DialogueManager : MonoBehaviour
         nodeIndex = 0;
         nextNode = true;
         typing = false;
+        answering = false;
         answers = new List<string>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        // User is answering
+        if (answering)
+        {
+            return;
+        }
+
         // Skip text when space is pressed
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -99,6 +107,8 @@ public class DialogueManager : MonoBehaviour
             }
             else if(currentNode.Name == "answer")
             {
+                // waiting for player to answer
+                answering = true;
                 // Get choice texts
                 string choice1 = currentNode.SelectSingleNode("./choice1").InnerText;
                 string choice2 = currentNode.SelectSingleNode("./choice2").InnerText;
@@ -179,6 +189,7 @@ public class DialogueManager : MonoBehaviour
         {
             answers.Add(currentNode.SelectSingleNode("./choice2").Attributes["value"].Value);
         }
+        answering = false;
     }
 
     private void DisableButtons()
