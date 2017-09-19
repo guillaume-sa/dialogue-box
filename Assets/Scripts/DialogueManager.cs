@@ -7,10 +7,14 @@ using System.Xml;
 
 public class DialogueManager : MonoBehaviour
 {
+    private static GameObject dialogueManagerGO;    // Dialogue Manager Game Object
+    public static DialogueManager instance = null;  // Dialogue Manager singleton instance
+    
+    // Parameters
+    private const float MIN_TYPING_WAIT = 0.02f;    // Minimum waiting time before next letter
+    private const float MAX_TYPING_WAIT = 0.1f;     // Maximum waiting time before next letter
 
-    public TextAsset xmlDialogFile;                 // Dialogue file
-    public AudioClip[] typingClips;                 // Typing audio clips
-
+    // UI 
     private Text text;                              // Text UI
     private Text choiceText1;                       // Button 1 text UI
     private Text choiceText2;                       // Button 2 text UI
@@ -18,39 +22,68 @@ public class DialogueManager : MonoBehaviour
     private Button button1;                         // Button 1
     private Button button2;                         // Button 2 
     private Image icon;                             // Icon UI
+
+    // Audio
+    public AudioClip[] typingClips;                 // Typing audio clips
+
+    // XML parsing
     private IEnumerator writingCoroutine;           // Writing cooroutine
+    private string message;                         // Message read from XML file
     private XmlNodeList nodes;                      // XML nodes read from file
     private XmlNode currentNode;                    // Current XML node
     private int nodeIndex = 0;                      // Index of current XML node
     private bool nextNode;                          // Ready to read the next node
     private bool typing;                            // Is message being typed
     private bool answering;                         // Is user answering
-    private string message;                         // Message
-    private const float MIN_TYPING_WAIT = 0.02f;    // Minimum waiting time before next letter
-    private const float MAX_TYPING_WAIT = 0.1f;     // Maximum waiting time before next letter
 
     private List<string> answers;                   // List of answers selected by the user
-
     public List<string> Answers                     // Answers property
     {
         get { return answers; }
     }
 
+    //Awake is always called before any Start functions
+    void Awake()
+    {
+        //Check if instance already exists
+        if (instance == null)
+
+            //if not, set instance to this
+            instance = this;
+
+        //If instance already exists and it's not this:
+        else if (instance != this)
+
+            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a DialogueManager.
+            Destroy(gameObject);
+
+        //Sets this to not be destroyed when reloading scene
+        DontDestroyOnLoad(gameObject);
+    }
+
     // Use this for initialization
     public void Start()
     {
+        // Get Dialogue Manager
+        dialogueManagerGO = GameObject.Find("Dialogue Manager");
         // Get UI components
-        text = GameObject.Find("Text").GetComponent<Text>();
-        choiceText1 = GameObject.Find("ChoiceText1").GetComponent<Text>();
-        choiceText2 = GameObject.Find("ChoiceText2").GetComponent<Text>();
-        buttonsCanvas = GameObject.Find("ChoiceButtons").GetComponent<Canvas>();
-        button1 = GameObject.Find("ChoiceButton1").GetComponent<Button>();
-        button2 = GameObject.Find("ChoiceButton2").GetComponent<Button>();
-        icon = GameObject.Find("Icon").GetComponent<Image>();
+        text = GameObject.Find("Dialogue Manager/Text").GetComponent<Text>();
+        icon = GameObject.Find("Dialogue Manager/Icon").GetComponent<Image>();
+        buttonsCanvas = GameObject.Find("Dialogue Manager/ChoiceButtons").GetComponent<Canvas>();
+        Button[] buttons = buttonsCanvas.GetComponentsInChildren<Button>();
+        button1 = buttons[0];
+        button2 = buttons[1];
+        choiceText1 = button1.GetComponentInChildren<Text>();
+        choiceText2 = button2.GetComponentInChildren<Text>();
         // Manage UI components
         button1.onClick.AddListener(OnChoiceClicked);
         button2.onClick.AddListener(OnChoiceClicked);
-        DisableButtons();
+        
+        dialogueManagerGO.SetActive(false);
+    }
+
+    public void Dialogue(TextAsset xmlDialogFile)
+    {
         // Load Dialog File
         XmlDocument xmlDoc = new XmlDocument();
         xmlDoc.LoadXml(xmlDialogFile.text);
@@ -63,6 +96,8 @@ public class DialogueManager : MonoBehaviour
         typing = false;
         answering = false;
         answers = new List<string>();
+        dialogueManagerGO.SetActive(true);
+        DisableButtons();
     }
 
     // Update is called once per frame
